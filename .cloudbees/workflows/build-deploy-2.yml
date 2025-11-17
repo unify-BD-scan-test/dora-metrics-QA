@@ -1,0 +1,61 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: build deploy 2
+on:
+  push:
+    branches:
+      - test-dora
+  workflow_dispatch:
+jobs:
+  build-deploy-artifact:
+    steps:
+      - name: Build
+        id: build
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          # Create a hash based on current time and random data
+          hash=$(date +%s%N | sha256sum | awk '{print $1}')
+          echo "Generated hash: $hash"
+
+          # Make it available to other steps
+          echo "$hash" >> $CLOUDBEES_OUTPUTS/hash
+      
+      - name: Register build artifact
+        id: publish-build-1
+        uses: cloudbees-io/register-build-artifact@v1
+        with:
+          version: ${{cloudbees.version}}
+          url: docker.io/library/shas/test-1
+          name: test-artifact-ninja-1:${{cloudbees.version}}
+      
+      - name: Register deployed artifact
+        kind: deploy
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ steps.publish-build-1.outputs.artifact-id }}
+          target-environment: preprod-us-west-2
+      
+      - name: Sleep
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          sleep 2
+      - name: Register build artifact
+        id: publish-build-3
+        uses: cloudbees-io/register-build-artifact@v1
+        with:
+          version: ${{cloudbees.version}}
+          url: docker.io/library/shas/test-3
+          name: test-artifact-ninja-3:${{cloudbees.version}}
+      - name: Register deployed artifact
+        kind: deploy
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ steps.publish-build-3.outputs.artifact-id }}
+          target-environment: preprod-us-west-2
+      - name: Sleep
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          sleep 2

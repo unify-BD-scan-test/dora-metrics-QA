@@ -1,0 +1,47 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: DORA-workflow
+on:
+  push:
+    branches:
+      - test-dora
+jobs:
+  build:
+    steps:
+      - name: Build step
+        uses: docker://golang:1.20.3-alpine3.17
+        kind: build
+        shell: sh 
+        run: |
+          echo "your build step"
+          sleep 10
+        
+
+  deploy-east-1:
+    environment: preprod-us-east-1
+    steps:
+      - name: Deploy step
+        uses: docker://golang:1.20.3-alpine3.17
+        kind: deploy
+        shell: sh
+        run: |
+          echo "hello world"
+          sleep 2
+          echo "hello again after 2 seconds"
+      - name: Post deployment step
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "hi again!!"
+          sleep 2
+          echo "hi again after 2 seconds"
+
+
+
+        
+      
+    
+
+        
+     
+   

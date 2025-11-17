@@ -1,0 +1,48 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: Build Plugin Blackduck Scanner
+on:
+  push:
+    branches:
+      - test-dora
+
+permissions:
+  scm-token-own: read
+  scm-token-org: read
+  id-token: write
+
+
+jobs:
+  build:
+    outputs:
+      artifact-ids: ${{ steps.build-and-publish.outputs.artifact-ids }}
+    steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
+
+      - name: AWS auth
+        uses: cloudbees-io/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ vars.oidc_staging_iam_role }}
+          role-duration-seconds: "3600"
+
+      - name: Build and publish image Test
+        id: build-and-publish
+        uses: cloudbees-io/kaniko@v1
+        with:
+          dockerfile: Dockerfile
+          destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/throwaway/actions/plugin-blackduck-sca:${{ cloudbees.version }}
+
+      
+  deploy:
+    needs:
+      - build
+    env:
+      DESTINATION1: "020229604682.dkr.ecr.us-east-1.amazonaws.com/throwaway/actions/plugin-blackduck-sca:${{ cloudbees.version }}"
+    steps:
+      - name: Register deployed artifact
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ fromJSON(needs.build.outputs.artifact-ids)[env.DESTINATION1] }}
+          target-environment: preprod-us-east-1
