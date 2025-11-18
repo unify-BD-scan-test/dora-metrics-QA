@@ -28,12 +28,12 @@ jobs:
         uses: cloudbees-io/kaniko@v1
         with:
           dockerfile: Dockerfile
-          destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/throwaway/actions/plugin-blackduck-sca:${{ cloudbees.version }}
+          destination: 709386575454.dkr.ecr.us-east-1.amazonaws.com/throwaway/actions/plugin-blackduck-sca:${{ cloudbees.version }}
   deploy:
     needs:
       - build
     env:
-      DESTINATION1: 020229604682.dkr.ecr.us-east-1.amazonaws.com/throwaway/actions/plugin-blackduck-sca:${{ cloudbees.version }}
+      DESTINATION1: 709386575454.dkr.ecr.us-east-1.amazonaws.com/throwaway/actions/plugin-blackduck-sca:${{ cloudbees.version }}
     steps:
       - name: Register deployed artifact
         uses: cloudbees-io/register-deployed-artifact@v2
