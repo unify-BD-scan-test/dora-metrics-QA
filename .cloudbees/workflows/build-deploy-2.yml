@@ -39,7 +39,7 @@ jobs:
       - name: Sleep
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
-        run: | exit
+        run: |
           sleep 2
       - name: Register build artifact
         id: publish-build-3
