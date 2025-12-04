@@ -27,7 +27,7 @@ jobs:
           echo "hello world"
           sleep 2
           echo "hello again after 2 seconds"
-          exit 1
+        #   exit 1
       - name: Post deployment step
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
