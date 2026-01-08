@@ -41,7 +41,7 @@ jobs:
         shell: sh
         run: |
           sleep 2
-          exit 1
+          # exit 1
       - name: Register build artifact
         id: publish-build-3
         uses: cloudbees-io/register-build-artifact@v1
