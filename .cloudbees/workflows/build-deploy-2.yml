@@ -23,7 +23,7 @@ jobs:
       
       - name: Register build artifact
         id: publish-build-1
-        uses: cloudbees-io/register-build-artifact@v1
+        uses: cloudbees-io/register-build-artifact@v2
         with:
           version: ${{cloudbees.version}}
           url: docker.io/library/shas/test-1
@@ -44,7 +44,7 @@ jobs:
           # exit 1
       - name: Register build artifact
         id: publish-build-3
-        uses: cloudbees-io/register-build-artifact@v1
+        uses: cloudbees-io/register-build-artifact@v2
         with:
           version: ${{cloudbees.version}}
           url: docker.io/library/shas/test-3
