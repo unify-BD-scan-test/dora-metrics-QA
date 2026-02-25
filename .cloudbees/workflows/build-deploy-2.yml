@@ -20,6 +20,7 @@ jobs:
 
           # Make it available to other steps
           echo "$hash" >> $CLOUDBEES_OUTPUTS/hash
+          exit 1
       
       - name: Register build artifact
         id: publish-build-1
